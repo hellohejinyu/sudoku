@@ -45,6 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     for (int i = 0; i < 9; i++) {
       sudoNodes.add([]);
       for (int k = 0; k < 9; k++) {
