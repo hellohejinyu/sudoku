@@ -251,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ..showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        '${AppLocalizations.of(context).getAnsTips(tryCnt)} ${noAnswer ? AppLocalizations.of(context).noAns : AppLocalizations.of(context).tellRes}',
+                                        '${AppLocalizations.of(context).getAnsTips(tryCnt)}${noAnswer ? AppLocalizations.of(context).noAns : AppLocalizations.of(context).tellRes}',
                                       ),
                                     ),
                                   );

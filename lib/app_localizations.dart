@@ -12,13 +12,13 @@ class AppLocalizations {
 
   static Map<String, Map<String, dynamic>> _localizedValues = {
     'en': {
-      'title': 'Sudoku calculator',
+      'title': 'Sudoku Calculator',
       'clear': 'CLEAR',
       'calculate': 'CALCULATE',
       'tips':
           'Click the grid to input the numbers from 1-9, after the input is complete, click the calculation button to get the result',
       'getAnsTips': (int tryCnt) {
-        return 'The system tried $tryCnt ${tryCnt > 1 ? 'times' : 'time'} hard';
+        return 'The system tried $tryCnt ${tryCnt > 1 ? 'times' : 'time'} hard ';
       },
       'noAns': 'found no solution to this question',
       'tellRes': 'just to tell you the result',
