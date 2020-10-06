@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:sudoku/app_localizations.dart';
 import 'package:sudoku/cell.dart';
 import 'package:sudoku/sudo_node.dart';
 import 'package:sudoku/sudo_nodes.dart';
@@ -20,19 +22,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sudo',
+      localizationsDelegates: [
+        const AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', ''),
+        const Locale.fromSubtags(languageCode: 'zh'),
+      ],
       theme: ThemeData(
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: '数独计算器'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -88,10 +97,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     doActionInSudoNodes((node) {
       if (node.x > 2 && node.x <= 5 && !(node.y > 2 && node.y <= 5)) {
-        node.backgroundColor = Colors.grey.withAlpha(64);
+        node.backgroundColor = Colors.grey.withAlpha(100);
       }
       if (node.y > 2 && node.y <= 5 && !(node.x > 2 && node.x <= 5)) {
-        node.backgroundColor = Colors.grey.withAlpha(64);
+        node.backgroundColor = Colors.grey.withAlpha(100);
       }
     });
 
@@ -122,7 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(
+          AppLocalizations.of(context).title,
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -194,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         });
                         setState(() {});
                       },
-                      child: Text('清空'),
+                      child: Text(AppLocalizations.of(context).clear),
                     ),
                     SizedBox(
                       width: 16,
@@ -240,13 +251,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ..showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          '系统努力尝试了 $tryCnt 次${noAnswer ? '发现此题无解' : '只为告诉你结果'}'),
+                                        '${AppLocalizations.of(context).getAnsTips(tryCnt)} ${noAnswer ? AppLocalizations.of(context).noAns : AppLocalizations.of(context).tellRes}',
+                                      ),
                                     ),
                                   );
                               });
                             },
                       child: Text(
-                        '计算',
+                        AppLocalizations.of(context).calculate,
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -264,7 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 left: 8,
               ),
               child: Text(
-                '点击格子输入 1-9 的数字，输入完成后，点击计算按钮获取结果',
+                AppLocalizations.of(context).tips,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
