@@ -1,8 +1,8 @@
-import 'package:sudoku/sudo_node.dart';
+import 'package:sudoku/sudoku_node.dart';
 
-class SudoNodes {
-  List<List<SudoNode>> nodes;
-  SudoNodes(this.nodes);
+class SudokuNodes {
+  List<List<SudokuNode>> nodes;
+  SudokuNodes(this.nodes);
 
   @override
   String toString() {
@@ -15,7 +15,7 @@ class SudoNodes {
     return '';
   }
 
-  SudoNode getNextNullNode() {
+  SudokuNode getNextNullNode() {
     for (int i = 0; i < 9; i++) {
       for (int k = 0; k < 9; k++) {
         if (nodes[i][k].value == null) {
@@ -26,12 +26,12 @@ class SudoNodes {
     return null;
   }
 
-  SudoNode getPrevNodeFrom(SudoNode node) {
-    SudoNode tmpNode;
+  SudokuNode getPrevNodeFrom(SudokuNode node) {
+    SudokuNode tmpNode;
     bool canInsert = true;
     for (int y = 0; y < 9; y++) {
       for (int x = 0; x < 9; x++) {
-        SudoNode currentNode = nodes[y][x];
+        SudokuNode currentNode = nodes[y][x];
         if (identical(currentNode, node)) {
           canInsert = false;
         }
@@ -43,7 +43,7 @@ class SudoNodes {
     return tmpNode;
   }
 
-  void clearAfterNodeFrom(SudoNode node) {
+  void clearAfterNodeFrom(SudokuNode node) {
     bool clear = false;
     for (int i = 0; i < 9; i++) {
       for (int k = 0; k < 9; k++) {
@@ -58,7 +58,7 @@ class SudoNodes {
   }
 
   bool getNextNodeAndCheck() {
-    SudoNode lastNullNode = getNextNullNode();
+    SudokuNode lastNullNode = getNextNullNode();
     if (lastNullNode == null) {
       return true;
     }

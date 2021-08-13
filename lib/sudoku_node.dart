@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SudoNode {
+class SudokuNode {
   int value;
   bool isFixed;
   bool isInputMode;
@@ -8,11 +8,11 @@ class SudoNode {
   final int y;
   Color backgroundColor;
   List<int> illegalNum = [];
-  List<SudoNode> colNodes;
-  List<SudoNode> rowNodes;
-  List<SudoNode> groupNodes;
+  List<SudokuNode> colNodes;
+  List<SudokuNode> rowNodes;
+  List<SudokuNode> groupNodes;
 
-  SudoNode({
+  SudokuNode({
     this.x,
     this.y,
     this.value,
