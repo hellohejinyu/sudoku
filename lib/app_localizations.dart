@@ -6,11 +6,11 @@ class AppLocalizations {
 
   final Locale locale;
 
-  static AppLocalizations of(BuildContext context) {
+  static AppLocalizations? of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static Map<String, Map<String, dynamic>> _localizedValues = {
+  static final Map<String, Map<String, dynamic>> _localizedValues = {
     'en': {
       'title': 'Sudoku Solver',
       'clear': 'CLEAR',
@@ -36,20 +36,20 @@ class AppLocalizations {
     },
   };
 
-  String get tellRes => _localizedValues[locale.languageCode]['tellRes'];
+  String get tellRes => _localizedValues[locale.languageCode]?['tellRes'];
 
-  String get noAns => _localizedValues[locale.languageCode]['noAns'];
+  String get noAns => _localizedValues[locale.languageCode]?['noAns'];
 
   String getAnsTips(int tryCnt) =>
-      _localizedValues[locale.languageCode]['getAnsTips'](tryCnt);
+      _localizedValues[locale.languageCode]?['getAnsTips'](tryCnt);
 
-  String get title => _localizedValues[locale.languageCode]['title'];
+  String get title => _localizedValues[locale.languageCode]?['title'];
 
-  String get tips => _localizedValues[locale.languageCode]['tips'];
+  String get tips => _localizedValues[locale.languageCode]?['tips'];
 
-  String get clear => _localizedValues[locale.languageCode]['clear'];
+  String get clear => _localizedValues[locale.languageCode]?['clear'];
 
-  String get calculate => _localizedValues[locale.languageCode]['calculate'];
+  String get calculate => _localizedValues[locale.languageCode]?['calculate'];
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
@@ -60,8 +60,6 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   Future<AppLocalizations> load(Locale locale) {
-    // Returning a SynchronousFuture here because an async "load" operation
-    // isn't needed to produce an instance of DemoLocalizations.
     return SynchronousFuture<AppLocalizations>(AppLocalizations(locale));
   }
 

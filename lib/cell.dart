@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Cell extends StatefulWidget {
-  final int value;
+  final int? value;
   final VoidCallback onTap;
-  final bool isInputMode;
-  final bool isFixed;
+  final bool? isInputMode;
+  final bool? isFixed;
   final bool hasConflict;
   final Function(String input) onInput;
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   const Cell({
-    Key key,
-    @required this.backgroundColor,
-    @required this.hasConflict,
-    @required this.isFixed,
-    @required this.onInput,
-    @required this.isInputMode,
-    @required this.onTap,
-    @required this.value,
-  }) : super(key: key);
+    super.key,
+    this.backgroundColor,
+    required this.hasConflict,
+    this.isFixed,
+    required this.onInput,
+    this.isInputMode,
+    required this.onTap,
+    this.value,
+  });
+
   @override
-  _CellState createState() => _CellState();
+  State<Cell> createState() => _CellState();
 }
 
 class _CellState extends State<Cell> {
@@ -31,15 +32,14 @@ class _CellState extends State<Cell> {
   @override
   void didUpdateWidget(Cell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isInputMode && !focusNode.hasFocus) {
+    if (widget.isInputMode == true && !focusNode.hasFocus) {
       focusNode.requestFocus();
     }
-    if (!widget.isInputMode) {
+    if (widget.isInputMode != true) {
       textController.text = '';
     } else {
-      if (widget.value != null &&
-          textController.text != widget.value.toString()) {
-        textController.text = widget.value.toString();
+      if (textController.text != (widget.value ?? '').toString()) {
+        textController.text = (widget.value ?? '').toString();
       }
     }
   }
@@ -59,10 +59,10 @@ class _CellState extends State<Cell> {
       },
       child: Container(
         color: widget.hasConflict
-            ? Colors.redAccent.withAlpha(40)
-            : widget.backgroundColor,
+            ? Colors.red.withAlpha(64)
+            : widget.backgroundColor ?? Colors.grey.withAlpha(64),
         child: Center(
-          child: widget.isInputMode
+          child: widget.isInputMode == true
               ? TextField(
                   onChanged: (input) {
                     widget.onInput(input);
@@ -70,7 +70,7 @@ class _CellState extends State<Cell> {
                   focusNode: focusNode,
                   textAlignVertical: TextAlignVertical.center,
                   controller: textController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     counterText: '',
                     isDense: true,
                     border: InputBorder.none,
@@ -81,7 +81,7 @@ class _CellState extends State<Cell> {
                   ],
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                     color: Colors.black87,
@@ -89,11 +89,13 @@ class _CellState extends State<Cell> {
                   ),
                 )
               : Text(
-                  widget.value != null ? widget.value.toString() : '',
+                  (widget.value ?? '').toString(),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
-                    color: widget.isFixed ? Colors.black87 : Colors.blueAccent,
+                    color: widget.isFixed == true
+                        ? Colors.black87
+                        : Colors.blueAccent,
                     height: 1,
                   ),
                 ),

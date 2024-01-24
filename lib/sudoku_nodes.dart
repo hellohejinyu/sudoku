@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:sudoku/sudoku_node.dart';
 
 class SudokuNodes {
@@ -8,14 +9,14 @@ class SudokuNodes {
   String toString() {
     nodes.asMap().forEach((key, node) {
       if (key % 3 == 0) {
-        print('——————————————————————————————————');
+        debugPrint('——————————————————————————————————');
       }
-      print(node.map((e) => e.value ?? '0').toList().join((' | ')));
+      debugPrint(node.map((e) => e.value ?? '0').toList().join((' | ')));
     });
     return '';
   }
 
-  SudokuNode getNextNullNode() {
+  SudokuNode? getNextNullNode() {
     for (int i = 0; i < 9; i++) {
       for (int k = 0; k < 9; k++) {
         if (nodes[i][k].value == null) {
@@ -26,8 +27,8 @@ class SudokuNodes {
     return null;
   }
 
-  SudokuNode getPrevNodeFrom(SudokuNode node) {
-    SudokuNode tmpNode;
+  SudokuNode? getPrevNodeFrom(SudokuNode node) {
+    SudokuNode? tmpNode;
     bool canInsert = true;
     for (int y = 0; y < 9; y++) {
       for (int x = 0; x < 9; x++) {
@@ -35,7 +36,7 @@ class SudokuNodes {
         if (identical(currentNode, node)) {
           canInsert = false;
         }
-        if (!currentNode.isFixed && canInsert) {
+        if (currentNode.isFixed != true && canInsert) {
           tmpNode = currentNode;
         }
       }
@@ -55,14 +56,5 @@ class SudokuNodes {
         }
       }
     }
-  }
-
-  bool getNextNodeAndCheck() {
-    SudokuNode lastNullNode = getNextNullNode();
-    if (lastNullNode == null) {
-      return true;
-    }
-
-    return false;
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,39 +10,43 @@ import 'package:sudoku/sudoku_nodes.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+    ),
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sudoku',
-      localizationsDelegates: [
-        const AppLocalizationsDelegate(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      localizationsDelegates: const [
+        AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('en', ''),
-        const Locale.fromSubtags(languageCode: 'zh'),
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale.fromSubtags(languageCode: 'zh'),
       ],
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -59,7 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
     for (int i = 0; i < 9; i++) {
       sudokuNodes.add([]);
       for (int k = 0; k < 9; k++) {
-        SudokuNode sudokuNode = SudokuNode(x: k, y: i);
+        SudokuNode sudokuNode = SudokuNode(
+          x: k,
+          y: i,
+        );
         sudokuNodes[i].add(sudokuNode);
       }
     }
@@ -96,10 +102,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     doActionInSudokuNodes((node) {
       if (node.x > 2 && node.x <= 5 && !(node.y > 2 && node.y <= 5)) {
-        node.backgroundColor = Colors.grey.withAlpha(100);
+        node.backgroundColor = Colors.grey.withAlpha(128);
       }
       if (node.y > 2 && node.y <= 5 && !(node.x > 2 && node.x <= 5)) {
-        node.backgroundColor = Colors.grey.withAlpha(100);
+        node.backgroundColor = Colors.grey.withAlpha(128);
       }
     });
 
@@ -130,8 +136,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(
-          AppLocalizations.of(context).title,
+          AppLocalizations.of(context)?.title ?? '',
         ),
       ),
       body: SingleChildScrollView(
@@ -143,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
               shrinkWrap: true,
               crossAxisCount: 1,
               childAspectRatio: 9,
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               children: sudokuNodes
                   .map(
                     (colNodes) => GridView.count(
@@ -154,20 +161,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: colNodes
                           .map(
                             (e) => Cell(
-                              backgroundColor: e.backgroundColor ??
-                                  Colors.grey.withAlpha(48),
+                              backgroundColor: e.backgroundColor,
                               hasConflict: e.hasConflict,
                               isFixed: e.isFixed,
                               isInputMode: e.isInputMode,
                               onInput: (v) {
                                 doActionInSudokuNodes((node) {
                                   node.illegalNum = [];
-                                  if (!node.isFixed) {
+                                  if (node.isFixed != true) {
                                     node.value = null;
                                   }
                                 });
                                 e.value = int.tryParse(v);
-                                e.isFixed = v.length > 0;
+                                e.isFixed = v.isNotEmpty;
                                 setState(() {});
                               },
                               onTap: () {
@@ -185,12 +191,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   )
                   .toList(),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Builder(
               builder: (context) => Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 8,
                 ),
                 child: Row(
@@ -204,12 +210,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         });
                         setState(() {});
                       },
-                      child: Text(AppLocalizations.of(context).clear),
+                      child: Text(AppLocalizations.of(context)?.clear ?? ''),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 16,
                     ),
-                    ElevatedButton(
+                    FilledButton(
                       onPressed: hasConflict()
                           ? null
                           : () {
@@ -222,15 +228,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               bool noAnswer = false;
                               while (true) {
                                 tryCnt++;
-                                SudokuNode node = nodes.getNextNullNode();
+                                SudokuNode? node = nodes.getNextNullNode();
                                 if (node != null && node.availableNum != null) {
                                   node.value = node.availableNum;
                                 } else {
                                   if (node != null) {
-                                    SudokuNode prevNode =
+                                    SudokuNode? prevNode =
                                         nodes.getPrevNodeFrom(node);
                                     if (prevNode != null) {
-                                      prevNode.illegalNum.add(prevNode.value);
+                                      prevNode.illegalNum.add(prevNode.value!);
                                       prevNode.value = null;
                                       nodes.clearAfterNodeFrom(prevNode);
                                       continue;
@@ -244,14 +250,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               setState(() {});
 
                               Timer(
-                                Duration(milliseconds: 400),
+                                const Duration(milliseconds: 400),
                                 () {
                                   ScaffoldMessenger.of(context)
                                     ..removeCurrentSnackBar()
                                     ..showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          '${AppLocalizations.of(context).getAnsTips(tryCnt)}${noAnswer ? AppLocalizations.of(context).noAns : AppLocalizations.of(context).tellRes}',
+                                          '${AppLocalizations.of(context)?.getAnsTips(tryCnt)}${noAnswer ? AppLocalizations.of(context)?.noAns : AppLocalizations.of(context)?.tellRes}',
                                         ),
                                       ),
                                     );
@@ -259,26 +265,23 @@ class _MyHomePageState extends State<MyHomePage> {
                               );
                             },
                       child: Text(
-                        AppLocalizations.of(context).calculate,
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
+                        AppLocalizations.of(context)?.calculate ?? '',
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Container(
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                 left: 8,
               ),
               child: Text(
-                AppLocalizations.of(context).tips,
-                style: TextStyle(
+                AppLocalizations.of(context)?.tips ?? '',
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                   color: Colors.black38,
