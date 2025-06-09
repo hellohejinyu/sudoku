@@ -10,9 +10,7 @@ import 'package:sudoku/sudoku_nodes.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-    ),
+    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
   runApp(const MyApp());
 }
@@ -25,8 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sudoku',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
       ),
       localizationsDelegates: const [
         AppLocalizationsDelegate(),
@@ -56,16 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     for (int i = 0; i < 9; i++) {
       sudokuNodes.add([]);
       for (int k = 0; k < 9; k++) {
-        SudokuNode sudokuNode = SudokuNode(
-          x: k,
-          y: i,
-        );
+        SudokuNode sudokuNode = SudokuNode(x: k, y: i);
         sudokuNodes[i].add(sudokuNode);
       }
     }
@@ -112,9 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
-  void doActionInSudokuNodes(
-    void Function(SudokuNode node) action,
-  ) {
+  void doActionInSudokuNodes(void Function(SudokuNode node) action) {
     for (int i = 0; i < 9; i++) {
       for (int k = 0; k < 9; k++) {
         action(sudokuNodes[i][k]);
@@ -137,9 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(
-          AppLocalizations.of(context)?.title ?? '',
-        ),
+        title: Text(AppLocalizations.of(context)?.title ?? ''),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -151,134 +139,145 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisCount: 1,
               childAspectRatio: 9,
               padding: const EdgeInsets.all(8),
-              children: sudokuNodes
-                  .map(
-                    (colNodes) => GridView.count(
-                      crossAxisCount: 9,
-                      childAspectRatio: 1,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 2,
-                      children: colNodes
-                          .map(
-                            (e) => Cell(
-                              backgroundColor: e.backgroundColor,
-                              hasConflict: e.hasConflict,
-                              isFixed: e.isFixed,
-                              isInputMode: e.isInputMode,
-                              onInput: (v) {
-                                doActionInSudokuNodes((node) {
-                                  node.illegalNum = [];
-                                  if (node.isFixed != true) {
-                                    node.value = null;
-                                  }
-                                });
-                                e.value = int.tryParse(v);
-                                e.isFixed = v.isNotEmpty;
-                                setState(() {});
-                              },
-                              onTap: () {
-                                doActionInSudokuNodes((node) {
-                                  node.isInputMode = false;
-                                });
-                                e.isInputMode = true;
-                                setState(() {});
-                              },
-                              value: e.value,
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  )
-                  .toList(),
+              children:
+                  sudokuNodes
+                      .map(
+                        (colNodes) => GridView.count(
+                          crossAxisCount: 9,
+                          childAspectRatio: 1,
+                          crossAxisSpacing: 2,
+                          mainAxisSpacing: 2,
+                          children:
+                              colNodes
+                                  .map(
+                                    (e) => Cell(
+                                      backgroundColor: e.backgroundColor,
+                                      hasConflict: e.hasConflict,
+                                      isFixed: e.isFixed,
+                                      isInputMode: e.isInputMode,
+                                      onInput: (v) {
+                                        doActionInSudokuNodes((node) {
+                                          node.illegalNum = [];
+                                          if (node.isFixed != true) {
+                                            node.value = null;
+                                          }
+                                        });
+                                        e.value = int.tryParse(v);
+                                        e.isFixed = v.isNotEmpty;
+                                        setState(() {});
+                                      },
+                                      onTap: () {
+                                        doActionInSudokuNodes((node) {
+                                          node.isInputMode = false;
+                                        });
+                                        e.isInputMode = true;
+                                        setState(() {});
+                                      },
+                                      value: e.value,
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      )
+                      .toList(),
             ),
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
             Builder(
-              builder: (context) => Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                ),
-                child: Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        doActionInSudokuNodes((node) {
-                          node.isInputMode = false;
-                          node.isFixed = false;
-                          node.value = null;
-                        });
-                        setState(() {});
-                      },
-                      child: Text(AppLocalizations.of(context)?.clear ?? ''),
-                    ),
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    FilledButton(
-                      onPressed: hasConflict()
-                          ? null
-                          : () {
-                              doActionInSudokuNodes((node) {
-                                node.illegalNum = [];
-                                node.isInputMode = false;
-                              });
-                              SudokuNodes nodes = SudokuNodes(sudokuNodes);
-                              int tryCnt = 0;
-                              bool noAnswer = false;
-                              while (true) {
-                                tryCnt++;
-                                SudokuNode? node = nodes.getNextNullNode();
-                                if (node != null && node.availableNum != null) {
-                                  node.value = node.availableNum;
-                                } else {
-                                  if (node != null) {
-                                    SudokuNode? prevNode =
-                                        nodes.getPrevNodeFrom(node);
-                                    if (prevNode != null) {
-                                      prevNode.illegalNum.add(prevNode.value!);
-                                      prevNode.value = null;
-                                      nodes.clearAfterNodeFrom(prevNode);
-                                      continue;
-                                    } else {
-                                      noAnswer = true;
-                                    }
-                                  }
-                                  break;
-                                }
-                              }
-                              setState(() {});
-
-                              Timer(
-                                const Duration(milliseconds: 400),
-                                () {
-                                  ScaffoldMessenger.of(context)
-                                    ..removeCurrentSnackBar()
-                                    ..showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          '${AppLocalizations.of(context)?.getAnsTips(tryCnt)}${noAnswer ? AppLocalizations.of(context)?.noAns : AppLocalizations.of(context)?.tellRes}',
-                                        ),
-                                      ),
+              builder:
+                  (context) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: [
+                        FilledButton(
+                          onPressed: () {
+                            doActionInSudokuNodes((node) {
+                              node.isInputMode = false;
+                              node.isFixed = false;
+                              node.value = null;
+                            });
+                            setState(() {});
+                          },
+                          style: FilledButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            backgroundColor: Colors.grey[200],
+                            foregroundColor: Colors.black87,
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)?.clear ?? '',
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        FilledButton(
+                          onPressed:
+                              hasConflict()
+                                  ? null
+                                  : () {
+                                    doActionInSudokuNodes((node) {
+                                      node.illegalNum = [];
+                                      node.isInputMode = false;
+                                    });
+                                    SudokuNodes nodes = SudokuNodes(
+                                      sudokuNodes,
                                     );
-                                },
-                              );
-                            },
-                      child: Text(
-                        AppLocalizations.of(context)?.calculate ?? '',
-                      ),
+                                    int tryCnt = 0;
+                                    bool noAnswer = false;
+                                    while (true) {
+                                      tryCnt++;
+                                      SudokuNode? node =
+                                          nodes.getNextNullNode();
+                                      if (node != null &&
+                                          node.availableNum != null) {
+                                        node.value = node.availableNum;
+                                      } else {
+                                        if (node != null) {
+                                          SudokuNode? prevNode = nodes
+                                              .getPrevNodeFrom(node);
+                                          if (prevNode != null) {
+                                            prevNode.illegalNum.add(
+                                              prevNode.value!,
+                                            );
+                                            prevNode.value = null;
+                                            nodes.clearAfterNodeFrom(prevNode);
+                                            continue;
+                                          } else {
+                                            noAnswer = true;
+                                          }
+                                        }
+                                        break;
+                                      }
+                                    }
+                                    setState(() {});
+
+                                    Timer(const Duration(milliseconds: 400), () {
+                                      ScaffoldMessenger.of(context)
+                                        ..removeCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              '${AppLocalizations.of(context)?.getAnsTips(tryCnt)}${noAnswer ? AppLocalizations.of(context)?.noAns : AppLocalizations.of(context)?.tellRes}',
+                                            ),
+                                          ),
+                                        );
+                                    });
+                                  },
+                          style: FilledButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)?.calculate ?? '',
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
             ),
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.only(
-                left: 8,
-              ),
+              padding: const EdgeInsets.only(left: 8),
               child: Text(
                 AppLocalizations.of(context)?.tips ?? '',
                 style: const TextStyle(
